@@ -2,7 +2,7 @@
 
 This project contains a TypeScript client implementation for the Agent-to-Agent (A2A) communication protocol that is derived from [Google's A2A sample code](https://github.com/google/A2A.git).  This client is suitable for use in browsers or servers and is available as an easy-to-use NPM package.
 
-Additional support has been added for Agentic Profiles which scope agents by users and businesses, give those entities globally unique ids, and provide universal authentication. All these new capabilites are accomplished with W3C standards (DID documents, JWT) and minimal glue code.
+Additional support has been added for Agentic Profiles which scope agents by users and businesses, give those entities globally unique ids, and provide universal authentication. All these new capabilites are accomplished with standards (W3C DID documents, IETF JWK) and minimal glue code.
 
 
 ### Key Features of the Client
@@ -173,7 +173,7 @@ With great options like JWT+EdDSA, centralized authentication systems like OAuth
 
 ## Quickstart
 
-The easiest way to run this demo is locally.
+The easiest way to run this try this library is locally.
 
 1. Requirements.  Make sure these are installed:
 

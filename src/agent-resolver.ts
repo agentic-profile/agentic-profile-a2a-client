@@ -27,7 +27,7 @@ export interface AgentContext {
  *  - if URL is DID protocol, fetch agentic profile, then resolve agent from service[]
  *  - if URL is HTTP/HTTPS then fetch agent card from:
  *      - existing URL if it ends with "/agent.json"
- *      - /.well-known/agent.json if the URL pathname is "/"
+ *      - /.well-known/agent.json if the URL pathname is exactly "/"
  *      - the agent.json in the same directory as the agent endpoint
  */
 export async function resolveAgent( agentUrl: string ): Promise<AgentContext> {

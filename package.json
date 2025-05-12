@@ -1,12 +1,13 @@
 {
   "name": "@agentic-profile/a2a-client",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "description": "Typescript client for AI Agents using A2A and the Agentic Profile",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "prepare": "tsup",
     "a2a:cli": "npx tsx --inspect=9230 tests/cli.ts",
+    "setup-my-agent": "npx tsx scripts/create-global-agentic-profile.ts",
     "build": "tsup",
     "test": "jest"
   },

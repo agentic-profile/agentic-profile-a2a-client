@@ -13,6 +13,8 @@ import {
     JSONRPCError
 } from "./schema.js";
 
+import { AuthenticationHandler, HttpHeaders } from "./auth-handler.js";
+
 // Simple error class for client-side representation of JSON-RPC errors
 export class RpcError extends Error {
     code: number;
@@ -24,25 +26,6 @@ export class RpcError extends Error {
         this.code = code;
         this.data = data;
     }
-}
-
-type HttpHeaders = { [key: string]: string };
-
-/**
- * Handle HTTP 401 and 403 error codes. If the process40x function
- * returns true, then retry the request using revised headers.
- */
-export interface AuthenticationHandler {
-    /* Provides additional HTTP request headers */
-    headers: () => HttpHeaders;
-    /**
-     * Called when the HTTP request returns a status code 401 or 403.  If this
-     * function returns true, then the request should be retried with
-     * revised headers from the headers() function.
-     */
-    process40x: (fetchResponse:Response) => Promise<boolean>,
-    /* If the last call using the headers() was successful, report using this function. */
-    onSuccess: () => Promise<void>
 }
 
 export interface JsonRpcClientOptions {
@@ -63,27 +46,11 @@ export class JsonRpcClient {
      * @param fetchImpl Optional custom fetch implementation (e.g., for Node.js environments without global fetch). Defaults to global fetch.
      */
     constructor(baseUrl: string, options?: JsonRpcClientOptions) {
-        const { fetchImpl = fetch, authHandler } = options ?? {};
         // Ensure baseUrl doesn't end with a slash for consistency
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
-        this.fetchImpl = fetchImpl;
-        this.authHandler = authHandler;
-    }
 
-    /**
-     * Helper to generate unique request IDs.
-     * Uses crypto.randomUUID if available, otherwise a simple timestamp-based fallback.
-     */
-    private _generateRequestId(): string | number {
-        if (
-            typeof crypto !== "undefined" &&
-            typeof crypto.randomUUID === "function"
-        ) {
-            return crypto.randomUUID();
-        } else {
-            // Fallback for environments without crypto.randomUUID
-            return Date.now();
-        }
+        this.fetchImpl = options?.fetchImpl ?? fetch;
+        this.authHandler = options?.authHandler;
     }
 
     /**
@@ -98,7 +65,7 @@ export class JsonRpcClient {
         params: Req["params"],
         acceptHeader: "application/json" | "text/event-stream" = "application/json"
     ): Promise<Response> {
-        const requestId = this._generateRequestId();
+        const requestId = generateRequestId();
         // JSONRPCRequest is not generic, the specific type comes from Req
         const requestBody: JSONRPCRequest = {
             jsonrpc: "2.0",
@@ -108,29 +75,26 @@ export class JsonRpcClient {
         };
 
         try {
-            const options = () => ({
+            const options = (headers: HttpHeaders = {}) => ({
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Accept: acceptHeader,
-                    ...(this.authHandler?.headers() ?? {} ) // if we have an Authorization header, add it
+                    ...headers // if we have an Authorization header, add it
                 },
                 body: JSON.stringify(requestBody),
                 // Consider adding keepalive: true if making many rapid requests
-            });
-            let fetchResponse = await this.fetchImpl(this.baseUrl, options());
-            if( !this.authHandler )
-                return fetchResponse;
+            } as RequestInit);
+            const requestInit = options( this.authHandler?.headers() )
+            let fetchResponse = await this.fetchImpl(this.baseUrl, requestInit);
 
-            // handle 401 and 403
-            const { status } = fetchResponse;
-            if( status === 401 || status === 403 ) {
-                if( await this.authHandler.process40x( fetchResponse ) ) {
-                    // retry request
-                    fetchResponse = await this.fetchImpl(this.baseUrl, options());
-                    if( fetchResponse.ok )
-                        await this.authHandler.onSuccess(); // Remember token that worked
-                }
+            // check for HTTP 401/403 and retry request if necessary
+            const updatedHeaders = await this.authHandler?.shouldRetryWithHeaders(requestInit, fetchResponse);
+            if (updatedHeaders) {
+                // retry request with revised headers
+                fetchResponse = await this.fetchImpl(this.baseUrl, options(updatedHeaders));
+                if (fetchResponse.ok && this.authHandler?.onSuccess)
+                    await this.authHandler.onSuccess(updatedHeaders); // Remember headers that worked
             }
 
             return fetchResponse;
@@ -360,5 +324,21 @@ export class JsonRpcClient {
             reader.releaseLock(); // Ensure the reader lock is released
             console.log(`SSE stream finished for method ${expectedMethod}.`);
         }
+    }
+}
+
+/**
+ * Helper to generate unique request IDs.
+ * Uses crypto.randomUUID if available, otherwise a simple timestamp-based fallback.
+ */
+function generateRequestId(): string | number {
+    if (
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ) {
+        return crypto.randomUUID();
+    } else {
+        // Fallback for environments without crypto.randomUUID
+        return Date.now();
     }
 }

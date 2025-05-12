@@ -27,7 +27,7 @@ import { A2AClient } from "../src/client.ts";
 import {
     AgentContext,
     resolveAgent
-} from "../src/card.js";
+} from "../src/agent-resolver.ts";
 import {
     // Specific Params/Payload types used by the CLI
     TaskSendParams,
@@ -37,7 +37,7 @@ import {
     // Other types needed for message/part handling
     FilePart,
     DataPart,
-} from "../src/schema.js";
+} from "../src/schema.ts";
 
 // --- ANSI Colors ---
 const colors = {
@@ -219,6 +219,11 @@ async function main() {
     // Make main async
     console.log(colorize("bright", `A2A Terminal Client`));
     console.log(colorize("dim", `Agent URL: ${peerAgentUrl}`));
+    if( !peerAgentUrl ) {
+        console.log(`Please provide an agent URL using the -p option, such as:
+    yarn a2a:cli -p http://localhost:3003/a2a/connect`);
+        process.exit();    
+    }
 
     const agentContext = await resolveAgent( peerAgentUrl as string );
     displayAgentCard( agentContext );
@@ -297,16 +302,20 @@ async function main() {
 // --- Start ---
 main();
 
-async function createAuthHandler( iamProfile: string = "global-me", userAgentDid: string ) {
+async function createAuthHandler( iamProfile: string = "my-a2a-client", userAgentDid: string ) {
     const myProfileAndKeyring = await loadProfileAndKeyring( join( os.homedir(), ".agentic", "iam", iamProfile ) );
-    const headers = {} as any;
+    let headers = {} as HttpHeaders;
 
     const { documentId, fragmentId } = pruneFragmentId( userAgentDid );
     const agentDid = documentId ? userAgentDid : myProfileAndKeyring.profile.id + fragmentId;
 
     const authHandler = {
         headers: () => headers,
-        process401: async (fetchResponse:Response) => {
+        shouldRetryWithHeaders: async (req:RequestInit, fetchResponse:Response) => {
+            // can/should I handle this?
+            if( fetchResponse.status !== 401 )
+                return undefined;
+
             const agenticChallenge = await fetchResponse.json();
             if( agenticChallenge.type !== AGENTIC_CHALLENGE_TYPE )
                 throw new Error(`Unexpected 401 response ${agenticChallenge}`);
@@ -321,10 +330,11 @@ async function createAuthHandler( iamProfile: string = "global-me", userAgentDid
                     return myProfileAndKeyring;
                 }
             });
-            headers.Authorization = `Agentic ${authToken}`;
-            return true;
+            return { Authorization: `Agentic ${authToken}` };
         },
-        onSuccess: async () => {}
+        onSuccess: async (updatedHeaders:HttpHeaders) => {
+            headers = updatedHeaders;
+        }
     };
 
     return authHandler;

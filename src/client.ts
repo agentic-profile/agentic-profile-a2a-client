@@ -39,10 +39,8 @@ import {
     TaskArtifactUpdateEvent,
 } from "./schema.js";
 
-import {
-    AuthenticationHandler,
-    JsonRpcClient 
-} from "./json-rpc.js";
+import { AuthenticationHandler } from "./auth-handler.js";
+import { JsonRpcClient } from "./json-rpc.js";
 
 export interface A2AClientOptions {
     fetchImpl?: typeof fetch,
