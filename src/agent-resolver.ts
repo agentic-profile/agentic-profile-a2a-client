@@ -6,8 +6,8 @@
  * well as other enhancements.
  */
 
+import { AgenticProfile } from "@agentic-profile/common/schema";
 import {
-    AgenticProfile,
     pruneFragmentId,
     webDidToUrl
 } from "@agentic-profile/common";
@@ -22,15 +22,19 @@ export interface AgentContext {
     agentCard: AgentCard  
 }
 
-/*
+/**
  * Fetch the agent card
  *  - if URL is DID protocol, fetch agentic profile, then resolve agent from service[]
  *  - if URL is HTTP/HTTPS then fetch agent card from:
  *      - existing URL if it ends with "/agent.json"
  *      - /.well-known/agent.json if the URL pathname is exactly "/"
  *      - the agent.json in the same directory as the agent endpoint
+ * @param agentUrl
+ * @param fetchImpl Optional override of the built in fetch()
+ * @returns An AgentContext with at least the agentCard and agetnCardUrl.  If the url was a DID
+ *      the context will also include the agenticProfile and profileUrl
  */
-export async function resolveAgent( agentUrl: string ): Promise<AgentContext> {
+export async function resolveAgent( agentUrl: string, fetchImpl?: typeof fetch ): Promise<AgentContext> {
     let profileUrl: string | undefined;
     let agenticProfile: AgenticProfile | undefined;
 
@@ -43,7 +47,7 @@ export async function resolveAgent( agentUrl: string ): Promise<AgentContext> {
 
         // fetch the DID document/agentic profile
         profileUrl = webDidToUrl( agentUrl );
-        ({ data: agenticProfile } = await getJson( profileUrl! ));
+        ({ data: agenticProfile } = await getJson( profileUrl!, { fetchImpl } ));
 
         // find agent
         const agent = agenticProfile!.service?.find(e=>e.id === fragmentId);
@@ -60,7 +64,6 @@ export async function resolveAgent( agentUrl: string ): Promise<AgentContext> {
 
     // fixup agentUrl for agent card
     let agentCardUrl: string;
-    console.log( 'agentUrl',agentUrl);
     if( url.pathname.endsWith("/agent.json") ) {
         agentCardUrl = url.toString();
     } else if( url.pathname === "/" ) {
@@ -70,7 +73,7 @@ export async function resolveAgent( agentUrl: string ): Promise<AgentContext> {
         agentCardUrl = new URL("agent.json",agentUrl).toString();
     }
 
-    const { data: agentCard } = await getJson( agentCardUrl );
+    const { data: agentCard } = await getJson( agentCardUrl, { fetchImpl } );
 
     return {
         profileUrl,

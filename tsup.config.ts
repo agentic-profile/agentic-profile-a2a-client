@@ -3,7 +3,7 @@ import { defineConfig } from "tsup";
 export default defineConfig({
     entry: ["src/**/*.ts"],
     format: ["cjs", "esm"], // Build for commonJS and ESmodules
-    dts: true, // Generate declaration file (.d.ts)
+    dts: true,
     splitting: false,
     sourcemap: true,
     clean: true,
@@ -11,9 +11,10 @@ export default defineConfig({
     target: "esnext",
     external: [
         "express","path","body-parser","depd",
+        "morgan", "cors",
         "loglevel",
         "@agentic-profile/auth",
         "@agentic-profile/common",
-        "@agentic-profile/ai-provider"
+        "@agentic-profile/express-common"
     ]
 });

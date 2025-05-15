@@ -7,13 +7,103 @@ Additional support has been added for Agentic Profiles which scope agents by use
 
 ### Key Features of the Client
 
+- **Globally Unique Agent Ids:** Scoped to users and businesses, to enable much easier discovery and powerful features like reputation.
+- **Universal Authentication:** Leverages DID document authentication methods such as JSON Web Keys.
 - **JSON-RPC Communication:** Handles sending requests and receiving responses (both standard and streaming via Server-Sent Events) according to the JSON-RPC 2.0 specification.
 - **A2A Methods:** Implements standard A2A methods like `sendTask`, `sendTaskSubscribe`, `getTask`, `cancelTask`, `setTaskPushNotification`, `getTaskPushNotification`, and `resubscribeTask`.
 - **Error Handling:** Provides basic error handling for network issues and JSON-RPC errors.
 - **Streaming Support:** Manages Server-Sent Events (SSE) for real-time task updates (`sendTaskSubscribe`, `resubscribeTask`).
 - **Extensibility:** Allows providing a custom `fetch` implementation for different environments (e.g., Node.js).
-- **Globally Unique Agent Ids:** Scoped to users and businesses, to enable much easier discovery and powerful features like reputation.
-- **Universal Authentication:** Leverages DID document authentication methods such as JSON Web Keys 
+
+
+## Quickstart
+
+The easiest way to try this library is locally.
+
+1. Requirements:
+
+    - [git](https://github.com/git-guides/install-git)
+    - [node](https://nodejs.org/en/download)
+    - [A2A-Service](https://github.com/agentic-profile/agentic-profile-a2a-service) running on localhost:4004
+
+2. Start the A2A Service on localhost:4004
+
+    - Follow the instructions to install, build, and run the A2A service demo: [A2A-Service](https://github.com/agentic-profile/agentic-profile-a2a-service)
+
+3. From the shell, clone this repository and switch to the project directory.
+
+    ```bash
+    git clone git@github.com:agentic-profile/agentic-profile-a2a-client.git
+    cd agentic-profile-a2a-client
+    ```
+
+4. Download dependencies and build the project
+
+    ```bash
+    npm install
+    npm run build
+    ```
+
+5. For each of the following examples, open a new terminal window. For examples with authentication skip to step #6
+
+    Start the A2A client using the agent card, but still no authentication
+
+    ```bash
+    npm run cli -- -p http://localhost:4004/agents/coder/
+    ```
+
+    Start the A2A client using the Agentic Profile, but still no authentication
+
+    ```bash
+    npm run cli -- -p did:web:localhost%3A4004:agents:coder#a2a-coder
+    ```
+
+6. In order to use authentication, you must create an agentic profile and keys to authenticate with.
+
+    ```bash
+    npm run create-demo-user
+    ```
+
+    The above script creates a new agentic profile on the test.agenticprofile.ai server, and also stores
+    a copy in your filesystem at ~/.agentic/iam/a2a-client-demo-user
+
+7. Examples using Agentic Profile authentication
+
+    Start the A2A client with an Agentic Profile and authentication
+
+    ```bash
+    npm run cli -- -p did:web:localhost%3A4004:users:2:coder#a2a-coder -u "#connect"
+    ```
+
+    Start the A2A client with the well-known Agentic Profile and authentication
+
+    ```bash
+    npm run cli -- -p did:web:localhost%3A4004#a2a-coder -u "#connect"
+    ```
+
+    Start the A2A client with the well-known agent and no authentication
+
+    ```bash
+    npm run cli -- -p http://localhost:4004/ -u "#connect"
+    ```
+
+8. Example of authentication error - when no authentication is provided
+
+    ```bash
+    npm run cli -- -p did:web:localhost%3A4004#a2a-coder
+    ```
+
+    In this example, the remote server challenged the HTTP request, but the client had no authentication to provide:
+
+    ```
+    HTTP error 401 received for streaming method tasks/sendSubscribe. Response: {
+      "type": "agentic-challenge/0.5",
+      "challenge": {
+          "id": 4,
+          "secret": "DZF1pX61IDHl3RZXVTaZW203Dwdp0nnOyxdpjzeQbZE"
+      }
+  }
+    ```
 
 
 ### Basic Usage
@@ -171,91 +261,4 @@ Public key cryptography, which is used extensively for internet communication, i
 With great options like JWT+EdDSA, centralized authentication systems like OAuth are unecessary.
 
 
-## Quickstart
 
-The easiest way to run this try this library is locally.
-
-1. Requirements.  Make sure these are installed:
-
-    - [git](https://github.com/git-guides/install-git)
-    - [yarn](https://yarnpkg.com/getting-started/install)
-    - [node](https://nodejs.org/en/download)
-
-2. From the shell, clone this repository and switch to the project directory.
-
-    ```bash
-    git clone git@github.com:agentic-profile/agentic-profile-a2a-client.git
-    cd agentic-profile-a2a-client
-    ```
-
-3. Download dependencies
-
-    ```bash
-    yarn
-    ```
-
-
-## Test the different A2A agents
-
-1. Make sure you have created an Agentic Profile for your agent:
-
-    ```bash
-    yarn setup-agents
-    ```
-
-2. Fron a different terminal window, start the A2A client with the default agent that doesn't require authentication
-
-    ```bash
-    yarn a2a:cli
-    ```
-
-3. Type in a prompt for the A2A client, such as "Write a program that says Hello world!"
-
-4. For each of the following examples, open a new terminal window. For examples with authentication skip to step #5
-
-    Start the A2A client using the agent card, but still no authentication
-
-    ```bash
-    yarn a2a:cli -p http://localhost:3003/agents/coder/
-    ```
-
-    Start the A2A client using the Agentic Profile, but still no authentication
-
-    ```bash
-    yarn a2a:cli -p did:web:localhost%3A3003:agents:coder#a2a-coder
-    ```
-
-    Start the A2A client with the well-known agent and no authentication
-
-    ```bash
-    yarn a2a:cli -p http://localhost:3003/
-    ```
-
-    Start the A2A client with the well-known agentic profile and no authentication
-
-    ```bash
-    yarn a2a:cli -p did:web:localhost%3A3003#a2a-coder
-    ```
-
-5. In order to use authentication, you must create an agentic profile and keys to authenticate with.
-
-    ```
-    node scripts/create-global-agentic-profile
-    ```
-
-    The above script creates a new agentic profile on the test.agenticprofile.ai server, and also stores
-    a copy in your filesystem at ~/.agentic/iam/global-me
-
-6. Examples using Agentic Profile authentication
-
-    Start the A2A client with an Agentic Profile and authentication
-
-    ```bash
-    yarn a2a:cli -p did:web:localhost%3A3003:users:2:coder#a2a-coder -u "#agent-chat"
-    ```
-
-    Start the A2A client with the well-known Agentic Profile and authentication
-
-    ```bash
-    yarn a2a:cli -i "global-me" -p did:web:localhost%3A3003#a2a-coder
-    ```

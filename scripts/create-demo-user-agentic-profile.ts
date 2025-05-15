@@ -1,5 +1,3 @@
-//import 'dotenv/config';
-
 import os from "os";
 import { join } from "path";
 import {
@@ -18,7 +16,7 @@ import {
 
 (async ()=>{
 
-    const port = process.env.PORT || 3003;
+    const port = process.env.PORT || 4004;
     const services = [
         {
             name: "People connector",
@@ -37,7 +35,7 @@ import {
         );
         const savedProfile = data.profile;
         const did = savedProfile.id;
-        console.log( `Published agentic profile to:
+        console.log( `Published demo user agentic profile to:
 
     ${webDidToUrl(did)}
 
@@ -47,13 +45,13 @@ Or via DID at:
 `);
 
         // also save locally for reference
-        const dir = join( os.homedir(), ".agentic", "iam", "my-a2a-client" );
+        const dir = join( os.homedir(), ".agentic", "iam", "a2a-client-demo-user" );
         await saveProfile({ dir, profile: savedProfile, keyring });
 
-        console.log(`Saved agentic profile to ${dir}
+        console.log(`Saved demo user agentic profile to ${dir}
 
 Shhhh! Keyring for testing... ${prettyJson( keyring )}`);
     } catch (error) {
-        console.error( "Failed to create global profile", error );
+        console.error( "Failed to create demo user profile", error );
     }
 })();

@@ -23,11 +23,11 @@ import { pruneFragmentId } from "@agentic-profile/common";
 
 import readline from "node:readline";
 import crypto from "node:crypto";
-import { A2AClient } from "../src/client.ts";
+import { A2AClient } from "./client.js";
 import {
     AgentContext,
     resolveAgent
-} from "../src/agent-resolver.ts";
+} from "./agent-resolver.js";
 import {
     // Specific Params/Payload types used by the CLI
     TaskSendParams,
@@ -37,7 +37,8 @@ import {
     // Other types needed for message/part handling
     FilePart,
     DataPart,
-} from "../src/schema.ts";
+} from "./schema.js";
+import { HttpHeaders } from "./auth-handler.js";
 
 // --- ANSI Colors ---
 const colors = {
@@ -83,10 +84,10 @@ const { values } = argv.parseArgs({
     args: process.argv.slice(2),
     options: ARGV_OPTIONS
 });
-const {
-    iam = "global-me",
+let {
+    iam,
     peerAgentUrl,
-    userAgentDid = "#agent-chat"
+    userAgentDid
 } = values;
 
 // --- State ---
@@ -214,22 +215,47 @@ function displayAgentCard({ profileUrl, agenticProfile, agentCardUrl, agentCard 
     rl.setPrompt(colorize("cyan", `${name} > You: `));
 }
 
+export interface CLIOptions {
+    iam?: string
+    userAgentDid?: string
+    peerAgentUrl?: string
+}
+
+
 // --- Main Loop ---
-async function main() {
+export async function main(options?:CLIOptions) {
+    iam = iam ?? options?.iam;
+    userAgentDid = userAgentDid ?? options?.userAgentDid;
+    peerAgentUrl = peerAgentUrl ?? options?.peerAgentUrl;
+
     // Make main async
     console.log(colorize("bright", `A2A Terminal Client`));
     console.log(colorize("dim", `Agent URL: ${peerAgentUrl}`));
     if( !peerAgentUrl ) {
-        console.log(`Please provide an agent URL using the -p option, such as:
-    yarn a2a:cli -p http://localhost:3003/a2a/connect`);
+        console.log(`Please provide a peer agent URL using the -p option, such as:
+    npm run a2a:cli -p http://localhost:3003/a2a/connect`);
         process.exit();    
+    }
+
+    if( !!userAgentDid && !iam ) {
+        console.log(`When the userAgentDid is provided, the iam profile must be provided using -i such as:
+    npm run a2a:cli -i a2a-client-demo-user -u did:web:example.com -p http://localhost:3003/a2a/connect`);
+        process.exit();       
     }
 
     const agentContext = await resolveAgent( peerAgentUrl as string );
     displayAgentCard( agentContext );
     const { agentCard } = agentContext;
 
-    const authHandler = await createAuthHandler( iam as string, userAgentDid as string );
+    let authHandler;
+    try {
+        authHandler = !!userAgentDid ? await createAuthHandler( iam as string, userAgentDid as string ) : undefined;
+    } catch(err) {
+        console.log(
+            colorize("bright", `${err}`)
+        );
+        process.exit();
+    }
     const client = new A2AClient( agentCard.url, { authHandler } );
 
     console.log(colorize("dim", `Starting Task ID: ${currentTaskId}`));
@@ -298,9 +324,6 @@ async function main() {
         process.exit(0);
     });
 }
-
-// --- Start ---
-main();
 
 async function createAuthHandler( iamProfile: string = "my-a2a-client", userAgentDid: string ) {
     const myProfileAndKeyring = await loadProfileAndKeyring( join( os.homedir(), ".agentic", "iam", iamProfile ) );

@@ -1,22 +1,36 @@
 {
   "name": "@agentic-profile/a2a-client",
-  "version": "0.4.16",
-  "description": "Typescript client for AI Agents using A2A and the Agentic Profile",
+  "version": "0.5.0",
+  "description": "A2A (Agent-to-Agent) client for AI Agents using A2A and the Agentic Profile",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "prepare": "tsup",
-    "a2a:cli": "npx tsx --inspect=9230 tests/cli.ts",
-    "setup-my-agent": "npx tsx scripts/create-global-agentic-profile.ts",
+    "cli": "npx tsx scripts/cli.ts",
+    "create-demo-user": "npx tsx scripts/create-demo-user-agentic-profile.ts",
     "build": "tsup",
     "test": "jest"
   },
   "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js",
+      "require": "./dist/schema.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "require": "./dist/cli.js"
+    }
   },
   "files": [
     "dist",
+    "LICENSE",
     "README.md"
   ],
   "type": "module",
@@ -31,12 +45,12 @@
   },
   "homepage": "https://github.com/agentic-profile/a2a-client#readme",
   "dependencies": {
-    "@agentic-profile/auth": "^0.4.10"
+    "@agentic-profile/auth": "^0.5.0"
   },
   "devDependencies": {
-    "@agentic-profile/express-common": "^0.4.14",
+    "@agentic-profile/express-common": "^0.5.0",
+    "@types/node": "^22.15.17",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"
-  },
-  "packageManager": "yarn@4.9.1"
+  }
 }
