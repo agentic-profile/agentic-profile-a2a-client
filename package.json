@@ -1,6 +1,6 @@
 {
   "name": "@agentic-profile/a2a-client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A2A (Agent-to-Agent) client for AI Agents using A2A and the Agentic Profile",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,12 +45,14 @@
   },
   "homepage": "https://github.com/agentic-profile/a2a-client#readme",
   "dependencies": {
-    "@agentic-profile/auth": "^0.5.0"
+    "@agentic-profile/auth": "^0.5.0",
+    "@agentic-profile/common": "^0.5.1"
   },
   "devDependencies": {
-    "@agentic-profile/express-common": "^0.5.0",
+    "@agentic-profile/express-common": "^0.5.1",
     "@types/node": "^22.15.17",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }

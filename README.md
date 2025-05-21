@@ -1,4 +1,6 @@
-# Typescript A2A Client with Agentic Profile support
+# Typescript/Javascript A2A Client with Agentic Profile support
+
+**NOTE: For a demonstration of this library and examples of its implemention, please download the [SDK](https://github.com/agentic-profile/agentic-profile-a2a)**
 
 This project contains a TypeScript client implementation for the Agent-to-Agent (A2A) communication protocol that is derived from [Google's A2A sample code](https://github.com/google/A2A.git).  This client is suitable for use in browsers or servers and is available as an easy-to-use NPM package.
 
@@ -18,95 +20,10 @@ Additional support has been added for Agentic Profiles which scope agents by use
 
 ## Quickstart
 
-The easiest way to try this library is locally.
-
-1. Requirements:
-
-    - [git](https://github.com/git-guides/install-git)
-    - [node](https://nodejs.org/en/download)
-    - [A2A-Service](https://github.com/agentic-profile/agentic-profile-a2a-service) running on localhost:4004
-
-2. Start the A2A Service on localhost:4004
-
-    - Follow the instructions to install, build, and run the A2A service demo: [A2A-Service](https://github.com/agentic-profile/agentic-profile-a2a-service)
-
-3. From the shell, clone this repository and switch to the project directory.
-
-    ```bash
-    git clone git@github.com:agentic-profile/agentic-profile-a2a-client.git
-    cd agentic-profile-a2a-client
-    ```
-
-4. Download dependencies and build the project
-
-    ```bash
-    npm install
-    npm run build
-    ```
-
-5. For each of the following examples, open a new terminal window. For examples with authentication skip to step #6
-
-    Start the A2A client using the agent card, but still no authentication
-
-    ```bash
-    npm run cli -- -p http://localhost:4004/agents/coder/
-    ```
-
-    Start the A2A client using the Agentic Profile, but still no authentication
-
-    ```bash
-    npm run cli -- -p did:web:localhost%3A4004:agents:coder#a2a-coder
-    ```
-
-6. In order to use authentication, you must create an agentic profile and keys to authenticate with.
-
-    ```bash
-    npm run create-demo-user
-    ```
-
-    The above script creates a new agentic profile on the test.agenticprofile.ai server, and also stores
-    a copy in your filesystem at ~/.agentic/iam/a2a-client-demo-user
-
-7. Examples using Agentic Profile authentication
-
-    Start the A2A client with an Agentic Profile and authentication
-
-    ```bash
-    npm run cli -- -p did:web:localhost%3A4004:users:2:coder#a2a-coder -u "#connect"
-    ```
-
-    Start the A2A client with the well-known Agentic Profile and authentication
-
-    ```bash
-    npm run cli -- -p did:web:localhost%3A4004#a2a-coder -u "#connect"
-    ```
-
-    Start the A2A client with the well-known agent and no authentication
-
-    ```bash
-    npm run cli -- -p http://localhost:4004/ -u "#connect"
-    ```
-
-8. Example of authentication error - when no authentication is provided
-
-    ```bash
-    npm run cli -- -p did:web:localhost%3A4004#a2a-coder
-    ```
-
-    In this example, the remote server challenged the HTTP request, but the client had no authentication to provide:
-
-    ```
-    HTTP error 401 received for streaming method tasks/sendSubscribe. Response: {
-      "type": "agentic-challenge/0.5",
-      "challenge": {
-          "id": 4,
-          "secret": "DZF1pX61IDHl3RZXVTaZW203Dwdp0nnOyxdpjzeQbZE"
-      }
-  }
-    ```
+For a demonstration of this library and examples of its implemention, please download the [SDK](https://github.com/agentic-profile/agentic-profile-a2a) and follow the instructions there.
 
 
-### Basic Usage
+## Basic Usage
 
 ```typescript
 import {
@@ -145,7 +62,7 @@ run();
 ```
 
 
-### Streaming Usage
+## Streaming Usage
 
 ```typescript
 import {
@@ -211,7 +128,7 @@ streamTask();
 This client is designed to work with servers implementing the A2A protocol specification.
 
 
-# Demonstration of Enhancing A2A with the Agentic Profile
+## Enhancing A2A with the Agentic Profile
 
 The Agentic Profile is a thin layer over A2A, MCP, and other HTTP protocols, and provides:
 
@@ -259,6 +176,3 @@ Another popular option is OAuth, but that has another host of problems including
 Public key cryptography, which is used extensively for internet communication, is ideal for decentralized authentication.  It is very easy to publish an agents public key via the Agentic Profile, and then the agent can use its secret key to authenticate.  JSON Web Tokens + EdDSA are mature and widely used standards, and the ones Agentic Profile uses.
 
 With great options like JWT+EdDSA, centralized authentication systems like OAuth are unecessary.
-
-
-
