@@ -1,6 +1,6 @@
 {
   "name": "@agentic-profile/a2a-client",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A2A (Agent-to-Agent) client for AI Agents using A2A and the Agentic Profile",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,14 +36,14 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agentic-profile/a2a-client.git"
+    "url": "git+https://github.com/agentic-profile/agentic-profile-a2a-client.git"
   },
   "author": "Mike Prince",
   "license": "Apache-2",
   "bugs": {
-    "url": "https://github.com/agentic-profile/a2a-client/issues"
+    "url": "https://github.com/agentic-profile/agentic-profile-a2a-client/issues"
   },
-  "homepage": "https://github.com/agentic-profile/a2a-client#readme",
+  "homepage": "https://github.com/agentic-profile/agentic-profile-a2a-client#readme",
   "dependencies": {
     "@agentic-profile/auth": "^0.6.0",
     "@agentic-profile/common": "^0.6.0"
