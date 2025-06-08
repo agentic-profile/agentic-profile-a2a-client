@@ -6,6 +6,8 @@
  * well as other enhancements.
  */
 
+export * from "./schema-entensions.js";
+
 // === JSON-RPC Base Structures
 
 /**

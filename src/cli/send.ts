@@ -10,11 +10,10 @@ import { join } from "path";
 import os from "os";
 
 import {
-    AGENTIC_CHALLENGE_TYPE,
-    generateAuthToken
+    generateAuthToken,
+    parseChallengeFromWwwAuthenticate
 } from "@agentic-profile/auth";
-import { loadProfileAndKeyring
-} from "@agentic-profile/express-common";
+import { loadProfileAndKeyring } from "@agentic-profile/express-common";
 import { pruneFragmentId } from "@agentic-profile/common";
 
 import { TaskSendParams } from "../schema.js";
@@ -61,9 +60,8 @@ export async function createAuthHandler( iamProfile: string = "my-a2a-client", u
             if( fetchResponse.status !== 401 )
                 return undefined;
 
-            const agenticChallenge = await fetchResponse.json();
-            if( agenticChallenge.type !== AGENTIC_CHALLENGE_TYPE )
-                throw new Error(`Unexpected 401 response ${agenticChallenge}`);
+            const wwwAuthenticate = fetchResponse.headers.get( "WWW-Authenticate" );
+            const agenticChallenge = parseChallengeFromWwwAuthenticate( wwwAuthenticate, fetchResponse.url );
 
             const authToken = await generateAuthToken({
                 agentDid,
