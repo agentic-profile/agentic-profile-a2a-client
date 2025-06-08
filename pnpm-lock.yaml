@@ -9,15 +9,15 @@ importers:
   .:
     dependencies:
       '@agentic-profile/auth':
-        specifier: ^0.5.4
-        version: 0.5.4
+        specifier: ^0.6.0
+        version: 0.6.0
       '@agentic-profile/common':
-        specifier: ^0.5.4
-        version: 0.5.4
+        specifier: ^0.6.0
+        version: 0.6.0
     devDependencies:
       '@agentic-profile/express-common':
-        specifier: ^0.5.5
-        version: 0.5.5
+        specifier: ^0.6.0
+        version: 0.6.0
       '@types/node':
         specifier: ^22.15.17
         version: 22.15.20
@@ -30,14 +30,14 @@ importers:
 
 packages:
 
-  '@agentic-profile/auth@0.5.4':
-    resolution: {integrity: sha512-6vvF6JfjrSdFcd4vFGv5X3CzCBKmxVUKdLeqJUncoF8ayBcI7xB1bMpdHpVzyYyqtc87Z7TBHTZheVDXJ1or2w==}
+  '@agentic-profile/auth@0.6.0':
+    resolution: {integrity: sha512-BwuaBfo+CA1g0JrcWmZW1Ek2nh8vV6J+kNX5kXbd0dH546ekqXg79NBiu6TDN0Ixb2H+5rhPv+kd/fwdpvovow==}
 
-  '@agentic-profile/common@0.5.4':
-    resolution: {integrity: sha512-OUfC9wYTpT9ZucaNAlc+BjayUF2ICqzNJLAjnvsqYW9mtcG03ItcG3Z2zW2nLkt3+W/7tram3K5ufrvnLeLX7g==}
+  '@agentic-profile/common@0.6.0':
+    resolution: {integrity: sha512-rSykQakmrXPRsI4jOERVWF10J7brL9o+KyTRAwQbVEH7z20zEUfqINxaThz9YtBGzdMCvnFiY8aYmxX6+JIIiw==}
 
-  '@agentic-profile/express-common@0.5.5':
-    resolution: {integrity: sha512-chi7t9fOFCK1lT7fq3arlUqh48R8sgIy+FgOWUEj6Gv9Eiz4iT0HBKJIXsg9xJDMTW6wkzexu3LAOBaY9RLmuw==}
+  '@agentic-profile/express-common@0.6.0':
+    resolution: {integrity: sha512-C9Jzp//kIkH+IfuvH5ygMh58yqhhGQTOOsqgYTEK/57wv+ZXAfPcOOrnOMrC8HejAmC/b/QH8mBW6x94O5TNkA==}
 
   '@esbuild/aix-ppc64@0.25.4':
     resolution: {integrity: sha512-1VCICWypeQKhVbE9oW/sJaAmjLxhVqacdkvPLEjwlttjfwENRSClS8EjBz0KzRyFSCPDIkuXW34Je/vk7zdB7Q==}
@@ -962,22 +962,22 @@ packages:
 
 snapshots:
 
-  '@agentic-profile/auth@0.5.4':
+  '@agentic-profile/auth@0.6.0':
     dependencies:
-      '@agentic-profile/common': 0.5.4
+      '@agentic-profile/common': 0.6.0
       '@noble/ed25519': 2.2.3
       did-resolver: 4.1.0
       loglevel: 1.9.2
 
-  '@agentic-profile/common@0.5.4':
+  '@agentic-profile/common@0.6.0':
     dependencies:
       did-resolver: 4.1.0
       loglevel: 1.9.2
 
-  '@agentic-profile/express-common@0.5.5':
+  '@agentic-profile/express-common@0.6.0':
     dependencies:
-      '@agentic-profile/auth': 0.5.4
-      '@agentic-profile/common': 0.5.4
+      '@agentic-profile/auth': 0.6.0
+      '@agentic-profile/common': 0.6.0
       cors: 2.8.5
       did-resolver: 4.1.0
       express: 4.21.2

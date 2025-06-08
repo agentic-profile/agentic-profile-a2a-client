@@ -49,7 +49,7 @@
     "@agentic-profile/common": "^0.6.0"
   },
   "devDependencies": {
-    "@agentic-profile/express-common": "^0.5.5",
+    "@agentic-profile/express-common": "^0.6.0",
     "@types/node": "^22.15.17",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"
