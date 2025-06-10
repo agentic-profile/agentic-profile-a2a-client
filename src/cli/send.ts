@@ -33,7 +33,7 @@ export async function send({ session, params }: SendOptions) {
 
     if( sendTask || agentCard.capabilities.streaming !== true ) {
         const response = await client.sendTask(params);
-        console.log( "response", JSON.stringify( response, null, 4 ) );
+        printAgentEvent( agentName, response as any)
     } else {
         // Pass only the params object to the client method
         const stream = client.sendTaskSubscribe(params);

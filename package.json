@@ -1,6 +1,6 @@
 {
   "name": "@agentic-profile/a2a-client",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A2A (Agent-to-Agent) client for AI Agents using A2A and the Agentic Profile",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
