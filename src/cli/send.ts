@@ -16,7 +16,7 @@ import {
 import { loadProfileAndKeyring } from "@agentic-profile/express-common";
 import { pruneFragmentId } from "@agentic-profile/common";
 
-import { TaskSendParams } from "../schema.js";
+import { MessageSendParams } from "@a2a-js/sdk";
 import { HttpHeaders } from "../auth-handler.js";
 import { colorize, printAgentEvent } from "./print.js";
 import { CLISession } from "./main.js";
@@ -24,7 +24,7 @@ import { CLISession } from "./main.js";
 
 type SendOptions = {
     session: CLISession
-    params: TaskSendParams
+    params: MessageSendParams
 }
 
 export async function send({ session, params }: SendOptions) {
@@ -32,7 +32,7 @@ export async function send({ session, params }: SendOptions) {
     console.log(colorize("gray", "Sending...")); // Indicate request is sent
 
     if( sendTask || agentCard.capabilities.streaming !== true ) {
-        const response = await client.sendTask(params);
+        const response = await client.sendMessage(params);
         printAgentEvent( agentName, response as any)
     } else {
         // Pass only the params object to the client method

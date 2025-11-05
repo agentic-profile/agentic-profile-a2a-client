@@ -11,7 +11,7 @@ import readline from "node:readline";
 
 import { A2AClient } from "../client.js";
 import { resolveAgent } from "../agent-resolver.js";
-import { AgentCard, TaskSendParams } from "../schema.js";
+import { AgentCard, MessageSendParams } from "@a2a-js/sdk";
 import { colorize, displayAgentCard } from "./print.js";
 import { createAuthHandler, send } from "./send.js";
 
@@ -144,12 +144,15 @@ export async function main(options?:CLIOptions) {
         }
 
         // Construct just the params for the request
-        const params: TaskSendParams = {
+        const params: MessageSendParams = {
             // Use the specific Params type
-            id: session.currentTaskId, // The actual Task ID
+            //messageId: session.currentTaskId, // The actual Task ID
             message: {
+                kind: "message",
+                messageId: crypto.randomUUID(),
+                contextId: "1",
                 role: "user",
-                parts: [{ type: "text", text: input }], // Ensure type: "text" is included if your schema needs it
+                parts: [{ kind: "text", text: input }], // Ensure type: "text" is included if your schema needs it
             },
         };
 

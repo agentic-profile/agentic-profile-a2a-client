@@ -12,8 +12,7 @@ import {
     webDidToUrl
 } from "@agentic-profile/common";
 import { getJson } from "@agentic-profile/auth";
-
-import { AgentCard } from "./schema.js";
+import { AgentCard } from "@a2a-js/sdk";
 
 export interface AgentContext {
     profileUrl?: string,

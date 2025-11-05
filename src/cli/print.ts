@@ -13,7 +13,7 @@ import {
     Message,
     FilePart,
     DataPart,
-} from "../schema.js";
+} from "@a2a-js/sdk";
 
 
 // --- ANSI Colors ---
@@ -87,9 +87,9 @@ export function printAgentEvent(
         console.log(
             `${prefix} 📄 Artifact Received: ${
                 update.artifact.name || "(unnamed)"
-            } (Index: ${update.artifact.index ?? 0})`
+            }`
         );
-        printMessageContent({ role: "agent", parts: update.artifact.parts }); // Reuse message printing logic
+        printMessageContent({ role: "agent", parts: update.artifact.parts } as any); // Reuse message printing logic
     } else {
         // This case should ideally not happen if the stream yields correctly typed events
         console.log(
@@ -111,7 +111,7 @@ export function printMessageContent(message: Message) {
                 `${partPrefix} ${colorize("blue", "📄 File:")} Name: ${
                     filePart.file.name || "N/A"
                 }, Type: ${filePart.file.mimeType || "N/A"}, Source: ${
-                    filePart.file.bytes ? "Inline (bytes)" : filePart.file.uri
+                    (filePart.file as any).bytes ? "Inline (bytes)" : (filePart.file as any).uri
                 }`
             );
             // Avoid printing large byte strings

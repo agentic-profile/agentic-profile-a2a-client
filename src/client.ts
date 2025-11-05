@@ -7,37 +7,13 @@
  */
 
 import {
-    // Full Request types (needed for internal generics)
-    SendTaskRequest,
-    GetTaskRequest,
-    CancelTaskRequest,
-    SendTaskStreamingRequest,
-    TaskResubscriptionRequest,
-    SetTaskPushNotificationRequest,
-    GetTaskPushNotificationRequest,
-
-    // Specific Params types (used directly in public method signatures)
-    TaskSendParams,
-    TaskQueryParams, // Used by get, resubscribe
-    TaskIdParams, // Used by cancel, getTaskPushNotificationConfig
-    TaskPushNotificationConfig, // Used by setTaskPushNotificationConfig
-
-    // Full Response types (needed for internal generics and result extraction)
-    SendTaskResponse,
-    GetTaskResponse,
-    CancelTaskResponse,
-    SendTaskStreamingResponse,
-    SetTaskPushNotificationResponse,
-    GetTaskPushNotificationResponse,
-
-    // Response Payload types (used in public method return signatures)
+    SendMessageRequest,
+    SendMessageResponse,
+    MessageSendParams,
     Task,
-    // TaskHistory, // Not currently implemented
-    
-    // Streaming Payload types (used in public method yield signatures)
     TaskStatusUpdateEvent,
-    TaskArtifactUpdateEvent,
-} from "./schema.js";
+    TaskArtifactUpdateEvent
+} from "@a2a-js/sdk";
 
 import { AuthenticationHandler } from "./auth-handler.js";
 import { JsonRpcClient } from "./json-rpc.js";
@@ -72,9 +48,9 @@ export class A2AClient {
      * @param params The parameters for the tasks/send method.
      * @returns A promise resolving to the Task object or null.
      */
-    async sendTask(params: TaskSendParams): Promise<Task | null> {
-        const httpResponse = await this.rpcClient.makeHttpRequest<SendTaskRequest>(
-            "tasks/send",
+    async sendMessage(params: MessageSendParams): Promise<Task | null> {
+        const httpResponse = await this.rpcClient.makeHttpRequest<SendMessageRequest>(
+            "message/send",
             params
         );
 
@@ -82,10 +58,11 @@ export class A2AClient {
             return null;
 
         // Pass the full Response type to handler, which returns Res['result']
-        return (await this.rpcClient.handleJsonResponse<SendTaskResponse>(
+        const result = await this.rpcClient.handleJsonResponse<SendMessageResponse>(
             httpResponse,
-            "tasks/send"
-        )) ?? null;
+            "message/send"
+        );
+        return (result as Task | null) ?? null;
     }
 
     /**
@@ -94,39 +71,44 @@ export class A2AClient {
      * @yields TaskStatusUpdateEvent or TaskArtifactUpdateEvent payloads.
      */
     sendTaskSubscribe(
-        params: TaskSendParams
+        params: MessageSendParams
     ): AsyncIterable<TaskStatusUpdateEvent | TaskArtifactUpdateEvent> {
         const streamGenerator = async function* (
             this: A2AClient
         ): AsyncIterable<TaskStatusUpdateEvent | TaskArtifactUpdateEvent> {
+            // Use SendMessageRequest but with type assertion for the method parameter
+            // The request structure is the same, only the method name differs
             const httpResponse =
-                await this.rpcClient.makeHttpRequest<SendTaskStreamingRequest>(
-                    "tasks/sendSubscribe",
+                await this.rpcClient.makeHttpRequest<SendMessageRequest>(
+                    "message/stream" as SendMessageRequest["method"],
                     params,
                     "text/event-stream"
                 );
 
-            if( httpResponse ) {
-                // Pass the full Response type to handler, which yields Res['result']
-                const result = await this.rpcClient.handleSseResponse<SendTaskStreamingResponse>(
+            if (httpResponse) {
+                // handleSseResponse is an async generator, so we directly yield from it
+                // The generic type specifies the result type of the JSON-RPC response
+                type StreamingResponse = {
+                    jsonrpc: "2.0";
+                    id?: string | number | null;
+                    result: TaskStatusUpdateEvent | TaskArtifactUpdateEvent;
+                    error?: never;
+                };
+                yield* this.rpcClient.handleSseResponse<StreamingResponse>(
                     httpResponse,
-                    "tasks/sendSubscribe"
+                    "message/stream"
                 );
-
-                if (isAsyncIterable<TaskStatusUpdateEvent | TaskArtifactUpdateEvent>(result)) {
-                    yield* result;
-                }
             }
         }.bind(this)();
 
-        return streamGenerator; // Type is AsyncIterable<TaskStatusUpdateEvent | TaskArtifactUpdateEvent>
+        return streamGenerator;
     }
 
     /**
      * Retrieves the current state of a task.
      * @param params The parameters for the tasks/get method.
      * @returns A promise resolving to the Task object or null.
-     */
+     *
     async getTask(params: TaskQueryParams): Promise<Task | null> {
         const httpResponse = await this.rpcClient.makeHttpRequest<GetTaskRequest>(
             "tasks/get",
@@ -139,7 +121,7 @@ export class A2AClient {
      * Cancels a currently running task.
      * @param params The parameters for the tasks/cancel method.
      * @returns A promise resolving to the updated Task object (usually canceled state) or null.
-     */
+     *
     async cancelTask(params: TaskIdParams): Promise<Task | null> {
         const httpResponse = await this.rpcClient.makeHttpRequest<CancelTaskRequest>(
             "tasks/cancel",
@@ -155,7 +137,7 @@ export class A2AClient {
      * Sets or updates the push notification config for a task.
      * @param params The parameters for the tasks/pushNotification/set method (which is TaskPushNotificationConfig).
      * @returns A promise resolving to the confirmed TaskPushNotificationConfig or null.
-     */
+     *
     async setTaskPushNotification(
         params: TaskPushNotificationConfig
     ): Promise<TaskPushNotificationConfig | null> {
@@ -173,7 +155,7 @@ export class A2AClient {
      * Retrieves the currently configured push notification config for a task.
      * @param params The parameters for the tasks/pushNotification/get method.
      * @returns A promise resolving to the TaskPushNotificationConfig or null.
-     */
+     *
     async getTaskPushNotification(
         params: TaskIdParams
     ): Promise<TaskPushNotificationConfig | null> {
@@ -191,7 +173,7 @@ export class A2AClient {
      * Resubscribes to updates for a task after a potential connection interruption.
      * @param params The parameters for the tasks/resubscribe method.
      * @yields TaskStatusUpdateEvent or TaskArtifactUpdateEvent payloads.
-     */
+     *
     resubscribeTask(
         params: TaskQueryParams
     ): AsyncIterable<TaskStatusUpdateEvent | TaskArtifactUpdateEvent> {
@@ -217,8 +199,10 @@ export class A2AClient {
 
         return streamGenerator; // Type is AsyncIterable<TaskStatusUpdateEvent | TaskArtifactUpdateEvent>
     }
+    */
 }
 
+/*
 function isAsyncIterable<T>(obj: any): obj is AsyncIterable<T> {
     return obj != null && typeof obj[Symbol.asyncIterator] === 'function';
-}
+}*/

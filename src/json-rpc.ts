@@ -7,12 +7,12 @@
  */
 
 import {
-    A2ARequest,
     JSONRPCRequest,
     JSONRPCResponse,
-    JSONRPCError
+    JSONRPCError,
+    ErrorCodeInternalError
 } from "./schema.js";
-
+import { A2ARequest } from "@a2a-js/sdk";
 import { AuthenticationHandler, HttpHeaders } from "./auth-handler.js";
 
 // Simple error class for client-side representation of JSON-RPC errors
@@ -62,7 +62,7 @@ export class JsonRpcClient {
      */
     async makeHttpRequest<Req extends A2ARequest>(
         method: Req["method"],
-        params: Req["params"],
+        params: Req extends { params: infer P } ? P : unknown,
         acceptHeader: "application/json" | "text/event-stream" = "application/json"
     ): Promise<Response> {
         const requestId = generateRequestId();
@@ -102,7 +102,7 @@ export class JsonRpcClient {
             console.error("Network error during RPC call:", networkError);
             // Wrap network errors into a standard error format if possible
             throw new RpcError(
-                -32603, // Use literal value for ErrorCodeInternalError
+                ErrorCodeInternalError,
                 `Network error: ${
                     networkError instanceof Error
                         ? networkError.message
@@ -162,7 +162,7 @@ export class JsonRpcClient {
                 jsonResponse.jsonrpc !== "2.0"
             ) {
                 throw new RpcError(
-                    -32603,
+                    ErrorCodeInternalError,
                     "Invalid JSON-RPC response structure received from server."
                 );
             }
@@ -193,7 +193,7 @@ export class JsonRpcClient {
                 throw error;
             } else {
                 throw new RpcError(
-                    -32603, // Use literal value for ErrorCodeInternalError
+                    ErrorCodeInternalError,
                     `Failed to process response: ${
                         error instanceof Error ? error.message : String(error)
                     }`,

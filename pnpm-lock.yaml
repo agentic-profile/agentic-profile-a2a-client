@@ -8,12 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@a2a-js/sdk':
+        specifier: ^0.3.5
+        version: 0.3.5(express@4.21.2)
       '@agentic-profile/auth':
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: ^0.6.2
+        version: 0.6.2
       '@agentic-profile/common':
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: ^0.6.1
+        version: 0.6.1
     devDependencies:
       '@agentic-profile/express-common':
         specifier: ^0.6.0
@@ -30,11 +33,20 @@ importers:
 
 packages:
 
-  '@agentic-profile/auth@0.6.0':
-    resolution: {integrity: sha512-BwuaBfo+CA1g0JrcWmZW1Ek2nh8vV6J+kNX5kXbd0dH546ekqXg79NBiu6TDN0Ixb2H+5rhPv+kd/fwdpvovow==}
+  '@a2a-js/sdk@0.3.5':
+    resolution: {integrity: sha512-6xAApkiss2aCbJXmXLC845tifcbYJ/R4Dj22kQsOaanMbf9bvkYhebDEuYPAIu3aaR5MWaBqG7OCK3IF8dqZZQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      express: ^4.21.2 || ^5.1.0
+    peerDependenciesMeta:
+      express:
+        optional: true
 
-  '@agentic-profile/common@0.6.0':
-    resolution: {integrity: sha512-rSykQakmrXPRsI4jOERVWF10J7brL9o+KyTRAwQbVEH7z20zEUfqINxaThz9YtBGzdMCvnFiY8aYmxX6+JIIiw==}
+  '@agentic-profile/auth@0.6.2':
+    resolution: {integrity: sha512-hVqADx5soP3c2GAts+intZjzWTqhvzcYGRdRayX3y06ZAb6F78ti2rIVpX+kKgrTcd7Gm26S8WCHRuDAfbYuKQ==}
+
+  '@agentic-profile/common@0.6.1':
+    resolution: {integrity: sha512-bovtOpnof2V7SnygbtLF1BHgBfH3WSKnnDJcAlrMmiZFPcYFEQqtnlmBkAEZw/iftua0MUmyDi7vcuAIIn+/Hg==}
 
   '@agentic-profile/express-common@0.6.0':
     resolution: {integrity: sha512-C9Jzp//kIkH+IfuvH5ygMh58yqhhGQTOOsqgYTEK/57wv+ZXAfPcOOrnOMrC8HejAmC/b/QH8mBW6x94O5TNkA==}
@@ -937,6 +949,10 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
+
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
@@ -962,22 +978,28 @@ packages:
 
 snapshots:
 
-  '@agentic-profile/auth@0.6.0':
+  '@a2a-js/sdk@0.3.5(express@4.21.2)':
     dependencies:
-      '@agentic-profile/common': 0.6.0
+      uuid: 11.1.0
+    optionalDependencies:
+      express: 4.21.2
+
+  '@agentic-profile/auth@0.6.2':
+    dependencies:
+      '@agentic-profile/common': 0.6.1
       '@noble/ed25519': 2.2.3
       did-resolver: 4.1.0
       loglevel: 1.9.2
 
-  '@agentic-profile/common@0.6.0':
+  '@agentic-profile/common@0.6.1':
     dependencies:
       did-resolver: 4.1.0
       loglevel: 1.9.2
 
   '@agentic-profile/express-common@0.6.0':
     dependencies:
-      '@agentic-profile/auth': 0.6.0
-      '@agentic-profile/common': 0.6.0
+      '@agentic-profile/auth': 0.6.2
+      '@agentic-profile/common': 0.6.1
       cors: 2.8.5
       did-resolver: 4.1.0
       express: 4.21.2
@@ -1804,6 +1826,8 @@ snapshots:
   unpipe@1.0.0: {}
 
   utils-merge@1.0.1: {}
+
+  uuid@11.1.0: {}
 
   vary@1.1.2: {}
 
