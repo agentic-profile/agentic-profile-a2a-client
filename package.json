@@ -1,6 +1,6 @@
 {
   "name": "@agentic-profile/a2a-client",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "A2A (Agent-to-Agent) client for AI Agents using A2A and the Agentic Profile",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -47,7 +47,7 @@
   "dependencies": {
     "@a2a-js/sdk": "^0.3.5",
     "@agentic-profile/auth": "^0.6.2",
-    "@agentic-profile/common": "^0.6.1",
+    "@agentic-profile/common": "^0.6.2",
     "brace-expansion": ">=2.0.2",
     "on-headers": ">=1.1.0"
   },
